@@ -52,15 +52,15 @@ public:
         nrCapsule = num;
     }
 
-    bool getFree() {
+    bool getFree() const {
         return free;
     }
 
-    Durata getDurata() {
+    Durata getDurata() const {
         return durata_spalare;
     }
 
-    int getCapsule() {
+    int getCapsule() const {
         return nrCapsule;
     }
 
@@ -103,11 +103,11 @@ public:
         }
     }
 
-    int getNrMasini() {
+    int getNrMasini() const {
         return nrMasini;
     }
 
-    Masina getMasini(int index) {
+    const Masina& getMasini(int index) {
         return (masini[index]);
     }
 
@@ -163,11 +163,10 @@ void Spalatorie::actualizareTimp(Durata _durata) {      //method for checking st
     }
 }
 
-void listeazaMasiniLibere(Spalatorie _spalatorie) {
+void listeazaMasiniLibere(Spalatorie &_spalatorie) {
     cout<<"Masinile libere sunt: ";
     for (int i=0; i<_spalatorie.getNrMasini(); i++) {
-        cout<<_spalatorie.getMasini(i).getFree()<<" ";
-        if (_spalatorie.getMasini(i).getFree() == true) {
+        if (_spalatorie.getMasini(i).getFree()) {
             cout<<i<<" ";
         }
     }
@@ -181,7 +180,7 @@ void Spalatorie::listeazaMasini() {     //method for listing
             cout<<i<<". "<<"Masina nu mai are capsule\n";
         }
         else {
-            if (Spalatorie::masini[i].getFree() == 1) {
+            if (Spalatorie::masini[i].getFree()) {
                 cout<<i<<". "<<"Masina este libera\n";
             }
             else {
