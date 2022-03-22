@@ -184,7 +184,10 @@ void Spalatorie::listeazaMasini() {     //method for listing
                 cout<<i<<". "<<"Masina este libera\n";
             }
             else {
-                cout<<i<<". "<<"Masina este ocupata pentru inca "<<Spalatorie::masini[i].getDurata().getMinute()<<":"<<Spalatorie::masini[i].getDurata().getSecunde()<<"\n";
+                if (Spalatorie::masini[i].getDurata().getSecunde() >= 10)
+                    cout<<i<<". "<<"Masina este ocupata pentru inca "<<Spalatorie::masini[i].getDurata().getMinute()<<":"<<Spalatorie::masini[i].getDurata().getSecunde()<<"\n";
+                else
+                    cout<<i<<". "<<"Masina este ocupata pentru inca "<<Spalatorie::masini[i].getDurata().getMinute()<<":0"<<Spalatorie::masini[i].getDurata().getSecunde()<<"\n";
             }
         }
     }
