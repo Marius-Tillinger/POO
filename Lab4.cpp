@@ -53,10 +53,6 @@ public:
         note.push_back(notaNoua);
     }
 
-    Student &operator-=(Student &c) {
-        note.clear();
-        return *this;
-    }
 };
 
 void Student::setNume(string word) {
@@ -124,9 +120,6 @@ int main() {
     student+=10;
     student+=8;
 
-    cout<<student;
-
-    student-=;
     cout<<student;
 
     return 0;
