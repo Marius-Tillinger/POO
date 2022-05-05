@@ -1,0 +1,4 @@
+C:\Users\Marius\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\213.7172.20\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/Marius/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/213.7172.20/bin/ninja/win/ninja.exe -G Ninja C:\Facultate\Semestru2\POO\Simulare_colocviu\proiect2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Facultate/Semestru2/POO/Simulare_colocviu/proiect2/cmake-build-debug
