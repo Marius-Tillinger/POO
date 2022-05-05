@@ -277,93 +277,41 @@ public:
     }
 };
 
-class Computer {
+
+class Computer : public IoBase{
 protected:
     static int  contor;
     const  int id;
-    vector<Malware*> listaMalware;
+    vector<shared_ptr<Malware>> listaMalware;
     int ratingFinal;
 public:
-    Computer(const int id, vector<Malware*> &listaMalware);
+    istream &read (istream &is) {
+        IoBase::read(is);
+        int tip;
+        cout << "Tipul malwareului (1: Rootkit, 2: Keylogger, 3: Kernel-Keylogger, 4: Ransomware): ";
+        do {
+            cin >> tip;
+            if (tip == 1) {
+                listaMalware.push_back(make_shared<Rootkit>());
+            } else if (tip == 2) {
+                listaMalware.push_back(make_shared<Keylogger>());
+            } else if (tip == 3) {
+                //listaMalware.push_back(make_shared<Kernel_Keylogger>());
+            } else if (tip == 4) {
+                listaMalware.push_back(make_shared<Ransomware>());
+            } else {
+                break;
+            }
+        }while (tip >=1 && tip <=4);
+    }
 
-    Computer(const int id);
-
-    static int getContor();
-
-    static void setContor(int contor);
-
-    const int getId() const;
-
-    const vector<Malware *> &getListaMalware() const;
-
-    void setListaMalware(const vector<Malware *> &listaMalware);
-
-    int getRatingFinal() const;
-
-    void setRatingFinal(int ratingFinal);
-
-    int calcRating();
+    Computer();
 };
 
-int Computer::calcRating() {
-    int total =0;
-    return total;
-}
+int Computer::contor = 0;
 
-void Computer::setContor(int contor) {
-    Computer::contor = contor;
-}
+Computer::Computer() : id(contor++) {}
 
-Computer::Computer(const int id, vector<Malware*> &listaMalware) : id(contor++), listaMalware(listaMalware) {}
-
-const int Computer::getId() const {
-    return id;
-}
-
-const vector<Malware *> &Computer::getListaMalware() const {
-    return listaMalware;
-}
-
-void Computer::setListaMalware(const vector<Malware *> &listaMalware) {
-    Computer::listaMalware = listaMalware;
-}
-
-int Computer::getRatingFinal() const {
-    return ratingFinal;
-}
-
-void Computer::setRatingFinal(int ratingFinal) {
-    Computer::ratingFinal = ratingFinal;
-}
-
-Computer::Computer(const int id) : id(contor++) {}
-
-shared_ptr<Malware> citireMalware() {
-    cout << "Tipul Malwareului (1 = Rootkit, 2 = Keylogger, 3 = Kernel Keylogger, 4 = Ransomware): ";
-    int tip;
-    cin >> tip;
-
-    shared_ptr<Malware> m;
-    if (tip == 1) {
-        m = make_shared<Rootkit>();
-    }
-    else {
-        if (tip == 2) {
-            m = make_shared<Keylogger>();
-        }
-        else {
-            if (tip == 3) {
-                auto m = make_shared<Kernel_Keylogger>();
-
-            }
-            else {
-                if (tip == 4) {
-                    m = make_shared<Ransomware>();
-                }
-            }
-        }
-    }
-}
 
 class Meniu {
 private:
@@ -372,24 +320,23 @@ private:
 public:
 
     void listeazaOptiuni() {
-        cout << "1. afișarea informațiilor pentru fiecare calculator ";
-        cout << "2. afișarea informațiilor pentru fiecare calculator fiind ordonate după ratingul final";
-        cout << " 3. afișarea primelor k calculatoare ordonate după ratingul final ";
-        cout << "4. afișarea procentului de computere infectate din firmă ";
-        cout << "5. Cititi n calculatoare si m malware uri pentru fiecare calculator";
-        cout << "6. Stop";
+        cout << "1. afisarea informatiilor pentru fiecare calculator \n";
+        cout << "2. afisarea informatiilor pentru fiecare calculator fiind ordonate dupa ratingul final \n";
+        cout << "3. afisarea primelor k calculatoare ordonate dupa ratingul final \n";
+        cout << "4. afisarea procentului de computere infectate din firma \n";
+        cout << "5. Cititi n calculatoare si m malware uri pentru fiecare calculator \n";
+        cout << "6. Stop \n";
     }
     //option picker
     int alegeOptiune() {
         int option;
 
-        while (option < 1 && option > 6) {
-            cout << "Alegeti optiunea intre 1 si 6!" << '\n';
+        cout << "Alegeti o optiune: ";
+        cin >> option;
+        cout<<endl;
 
-            cout << "Option: ";
-            cin >> option;
-        }
-        return option;
+        if (option >=1 && option <=6)
+            return option;
     }
     //main loop
     void run() {
@@ -400,6 +347,8 @@ public:
             int option = alegeOptiune();
             if (option == 5) {
                 citireCalc();
+            }else if (option >6 || option <1) {
+                cout << "Nu ai aceasta optiune, mai incearca :)\n\n";
             } else if (option == 1) {
                 afisareCalc();
             } else if (option == 2) {
@@ -423,6 +372,10 @@ public:
         }
     }
 
+    void afisareCalc() {}
+    void afisareOrd() {}
+    void afisarePrimeK() {}
+    void afisareProcent() {}
 };
 
 int main() {
