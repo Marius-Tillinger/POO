@@ -6,13 +6,13 @@
 
 #include <iostream>
 #include <vector>
-#include <cstring>
+#include <cstring>      //i dont need it but it's good to have anyways
 #include <memory>
 #include "util/IoBase.h"
 
 using namespace std;
 
-struct Data {
+struct Data {       //data structure for remembering calendar data types
     int zi, luna, an;
 };
 
@@ -28,19 +28,20 @@ public:
         IoBase::read(is);
         cout << "Impact: ";
         is >> impact;
-        cout << "Data: ";
-        is >> datainf.zi >> datainf.luna >> datainf.an;
+        cout << "Data:\n";
+        cout << "zi: "; is >> datainf.zi; cout << "luna: "; is >> datainf.luna; cout << "an: "; is >> datainf.an;
         cout << "Nume: ";
         is >> nume;
         cout << "Metoda: ";
         is >> metoda;
-        cout << "Registrii: ";
+        cout << "Registrii (scrieti NONE pentru a trece mai departe): ";
         registrii.clear();
         string registru;
+
         do {
             is >> registru;
             registrii.push_back(registru);
-        }while (registru != "");
+        }while (registru != "NONE");
 
         //am citit toate datele importante pentru clasa Malware
 
@@ -51,8 +52,8 @@ public:
         IoBase::write(os);
         cout << "Impact: ";
         os << impact<<endl;
-        cout << "Data: ";
-        os << datainf.zi << datainf.luna << datainf.an<<endl;
+        cout << "Data:\n";
+        cout << "zi: "; os << datainf.zi; cout << ", luna: "; os << datainf.luna; cout << ", an: "; os << datainf.an<<endl;
         cout << "Nume: ";
         os << nume<<endl;
         cout << "Metoda: ";
@@ -68,30 +69,32 @@ public:
     }
 };
 
-class Rootkit: public Malware {     //mostenire clasa Malware
+class Rootkit: virtual public Malware {     //mostenire clasa Malware
 protected:
     vector<string> importuri;
     vector<string> semnificative;
 public:
+    Rootkit() {}
+
     istream &read(istream &is) override {       //mostenire functie de citire
         Malware::read(is);
         string import;
         string semnificativ;
-        cout << "Importuri: " ;
+        cout << "Importuri (scrieti NONE pentru a trece mai departe): " ;
         importuri.clear();
         semnificative.clear();      //golim vectorii
 
         do {
             is >> import;
             importuri.push_back(import);
-        }while (import != "");
+        }while (import != "NONE");
 
-        cout << "Semnificative: ";
+        cout << "Semnificative (scrieti NONE pentru a trece mai departe): ";
 
         do {
             is >> semnificativ;
             semnificative.push_back(semnificativ);
-        }while (semnificativ != "");
+        }while (semnificativ != "NONE");
 
         return is;
 
@@ -118,30 +121,32 @@ public:
     }
 };
 
-class Keylogger : public Malware {      //alta mostenire
+class Keylogger : virtual public Malware {      //alta mostenire
 protected:
     vector<string> functii;
     vector<string> taste;
 public:
+    Keylogger() {}
+
     istream &read(istream &is) override {       //citire pentru keylogger
         Malware::read(is);
         functii.clear();
         taste.clear();
-        cout << "Fuctii: ";
+        cout << "Fuctii (scrieti NONE pentru a trece mai departe): ";
         string functie;
         string tasta;
 
         do {
             is >> functie;
             functii.push_back(functie);
-        }while (functie != "");
+        }while (functie != "NONE");
 
-        cout << "Taste: ";
+        cout << "Taste (scrieti NONE pentru a trece mai departe): ";
 
         do {
             is >> tasta;
             taste.push_back(tasta);
-        }while (tasta != "");
+        }while (tasta != "NONE");
 
         return is;
     }
@@ -171,37 +176,39 @@ protected:
     bool fisiereAscunse;
     bool registriiAscunsi;
 public:
+    Kernel_Keylogger() {}
+
     istream &read(istream &is) override {       //cititm proprietatile obiectului mostenit in diamant
-       Rootkit::read(is);
+        Rootkit::read(is);
 
-       Keylogger::functii.clear();
-       Keylogger::taste.clear();
-       cout << "Fuctii: ";
-       string functie;
-       string tasta;
+        Keylogger::functii.clear();
+        Keylogger::taste.clear();
+        cout << "Fuctii (scrieti NONE pentru a trece mai departe): ";
+        string functie;
+        string tasta;
 
-       do {
-           is >> functie;
-           Keylogger::functii.push_back(functie);
-       }while (functie != "");
+        do {
+            is >> functie;
+            Keylogger::functii.push_back(functie);
+        }while (functie != "NONE");
 
-       cout << "Taste: ";
+        cout << "Taste (scrieti NONE pentru a trece mai departe): ";
 
-       do {
-           is >> tasta;
-           Keylogger::taste.push_back(tasta);
-       }while (tasta != "");
+        do {
+            is >> tasta;
+            Keylogger::taste.push_back(tasta);
+        }while (tasta != "NONE");
 
-       cout << "Fisiere ascunse? (Da/Nu): ";
-       string raspuns;
-       cin >> raspuns;
+        cout << "Fisiere ascunse? (Da/Nu): ";
+        string raspuns;
+        cin >> raspuns;
 
-       if (raspuns == "Da") {
-           fisiereAscunse = true;
-       }
-       else if (raspuns == "Nu") {
-           fisiereAscunse = false;
-       }
+        if (raspuns == "Da") {
+            fisiereAscunse = true;
+        }
+        else if (raspuns == "Nu") {
+            fisiereAscunse = false;
+        }
 
         cout << "Registrii ascunsi? (Da/Nu): ";
         cin >> raspuns;
@@ -214,7 +221,7 @@ public:
         }
     }
 
-    ostream &write(ostream &os) const override {
+    ostream &write(ostream &os) const override {        //citire Kernel Keylogger la care inca nu stiu daca merge
         Rootkit::write(os);
 
         cout << "Functii: ";
@@ -251,11 +258,13 @@ public:
     }
 };
 
-class Ransomware : public Malware {
+class Ransomware : public Malware {     //malware public inheritence for malware type ransomware
 protected:
     int rating;
     int obfuscare;
 public:
+    Ransomware() {}
+
     istream &read(istream &is) override {
         Malware::read(is);
         cout << "Rating: ";
@@ -277,119 +286,93 @@ public:
     }
 };
 
+//deleted shared_ptr for being useless
+
 class Computer {
 protected:
     static int  contor;
     const  int id;
-    vector<Malware*> listaMalware;
-    int ratingFinal;
+    vector<shared_ptr<Malware>> listaMalware;
+    int ratingFinal;        //ratingul final se calculeaza si este initial 0
 public:
-    Computer(const int id, vector<Malware*> &listaMalware);
-
-    Computer(const int id);
-
-    static int getContor();
-
-    static void setContor(int contor);
+    friend istream &operator>>(istream &in, Computer &c);
+    friend ostream &operator<<(ostream &out, const Computer &c);
+    Computer();
 
     const int getId() const;
 
-    const vector<Malware *> &getListaMalware() const;
-
-    void setListaMalware(const vector<Malware *> &listaMalware);
+    const vector<shared_ptr<Malware>> &getListaMalware() const;
 
     int getRatingFinal() const;
-
-    void setRatingFinal(int ratingFinal);
-
-    int calcRating();
 };
 
-int Computer::calcRating() {
-    int total =0;
-    return total;
+istream &operator>> ( istream &in, Computer &c ) {      //operatorul de citire pentru cate un calculator
+    int tip;
+    cout << "\n";
+    cout << "Alegeti tipul malwareului din meniul de mai jos sau apasati 5 pentru a merge mai departe\n";
+    cout << "Tipul malwareului (1: Rootkit, 2: Keylogger, 3: Kernel-Keylogger, 4: Ransomware): \n";
+    shared_ptr<Malware> m;
+    do {
+        cin >> tip;                                                         //changing the type of malware we are working with
+        if (tip == 1) {
+            m = make_shared<Rootkit>();
+            cin >> *m;
+            c.listaMalware.push_back(m);
+        } else if (tip == 2) {
+            c.listaMalware.push_back(make_shared<Keylogger>());
+        } else if (tip == 3) {
+            c.listaMalware.push_back(make_shared<Kernel_Keylogger>());
+        } else if (tip == 4) {
+            c.listaMalware.push_back(make_shared<Ransomware>());
+        } else {
+            break;
+        }
+    }while (tip >=1 && tip <=4);
+
+    return in;
 }
 
-void Computer::setContor(int contor) {
-    Computer::contor = contor;
-}
+int Computer::contor = 0;
 
-Computer::Computer(const int id, vector<Malware*> &listaMalware) : id(contor++), listaMalware(listaMalware) {}
+Computer::Computer() : id(contor++) {}
 
 const int Computer::getId() const {
     return id;
 }
 
-const vector<Malware *> &Computer::getListaMalware() const {
+const vector<shared_ptr<Malware>> &Computer::getListaMalware() const {
     return listaMalware;
-}
-
-void Computer::setListaMalware(const vector<Malware *> &listaMalware) {
-    Computer::listaMalware = listaMalware;
 }
 
 int Computer::getRatingFinal() const {
     return ratingFinal;
 }
+//automatic id incrementation
 
-void Computer::setRatingFinal(int ratingFinal) {
-    Computer::ratingFinal = ratingFinal;
-}
 
-Computer::Computer(const int id) : id(contor++) {}
-
-shared_ptr<Malware> citireMalware() {
-    cout << "Tipul Malwareului (1 = Rootkit, 2 = Keylogger, 3 = Kernel Keylogger, 4 = Ransomware): ";
-    int tip;
-    cin >> tip;
-
-    shared_ptr<Malware> m;
-    if (tip == 1) {
-        m = make_shared<Rootkit>();
-    }
-    else {
-        if (tip == 2) {
-            m = make_shared<Keylogger>();
-        }
-        else {
-            if (tip == 3) {
-                auto m = make_shared<Kernel_Keylogger>();
-
-            }
-            else {
-                if (tip == 4) {
-                    m = make_shared<Ransomware>();
-                }
-            }
-        }
-    }
-}
-
-class Meniu {
+class Meniu {       //basic menu class for adding interface
 private:
     vector<Computer> calculatoare;
-    vector<shared_ptr<Malware>> malwareuri;
 public:
 
     void listeazaOptiuni() {
-        cout << "1. afișarea informațiilor pentru fiecare calculator ";
-        cout << "2. afișarea informațiilor pentru fiecare calculator fiind ordonate după ratingul final";
-        cout << " 3. afișarea primelor k calculatoare ordonate după ratingul final ";
-        cout << "4. afișarea procentului de computere infectate din firmă ";
-        cout << "5. Cititi n calculatoare si m malware uri pentru fiecare calculator";
-        cout << "6. Stop";
+        cout << "1. afisarea informatiilor pentru fiecare calculator \n";
+        cout << "2. afisarea informatiilor pentru fiecare calculator fiind ordonate dupa ratingul final \n";
+        cout << "3. afisarea primelor k calculatoare ordonate dupa ratingul final \n";
+        cout << "4. afisarea procentului de computere infectate din firma \n";
+        cout << "5. Cititi n calculatoare si m malware uri pentru fiecare calculator \n";
+        cout << "6. Stop \n";
     }
     //option picker
     int alegeOptiune() {
         int option;
 
-        while (option < 1 && option > 6) {
-            cout << "Alegeti optiunea intre 1 si 6!" << '\n';
+        cout << "Alegeti o optiune: ";
+        cin >> option;
+        cout<<endl;
 
-            cout << "Option: ";
-            cin >> option;
-        }
-        return option;
+        if (option >=1 && option <=6)
+            return option;
     }
     //main loop
     void run() {
@@ -400,6 +383,8 @@ public:
             int option = alegeOptiune();
             if (option == 5) {
                 citireCalc();
+            }else if (option >6 || option <1) {
+                cout << "Nu ai aceasta optiune, mai incearca :)\n\n";
             } else if (option == 1) {
                 afisareCalc();
             } else if (option == 2) {
@@ -409,21 +394,59 @@ public:
             } else if (option == 4) {
                 afisareProcent();
             } else if (option == 6) {
+                cout << "----------------------------------------------||----------------------------------------------------\n";
                 break;
             }
         }
     }
 
-    void citireCalc() {
-        int n;
-        cin >> n;
+    //menu functions
 
-        for (int i=0; i<n; i++) {
-            
-        }
-    }
+    void citireCalc();
+    void afisareCalc();
+    void afisareOrd();
+    void afisarePrimeK();
+    void afisareProcent();
 
 };
+
+void Meniu::citireCalc () {
+    int n;
+    Meniu::calculatoare.clear();
+    cout << "Numarul calculatoarelor: "; cin >> n;      //input nr of computers
+    Computer c;
+
+    for ( int i=0; i<n; i++ ) {
+        cout << "Adaugati calculator: "; cin >> c;      //read every computer and adding it to the list of computers in the firm
+        Meniu::calculatoare.push_back(c);
+    }
+}
+
+void Meniu::afisareCalc() {
+
+    for ( int i=0; i<Meniu::calculatoare.size(); i++ ) {
+        cout << "Calculatorul cu id: " << Meniu::calculatoare[i].getId() << ", ";
+        cout << "cu lista de malwareuri: ";
+
+        for ( int j=0; j<Meniu::calculatoare[i].getListaMalware().size(); j++ ) {
+            cout << *Meniu::calculatoare[i].getListaMalware()[j] << " ";
+        }
+
+        cout << "cu ratingul final de: " << Meniu::calculatoare[i].getRatingFinal() << "\n\n";
+    }
+}
+
+void Meniu::afisareOrd() {
+
+}
+
+void Meniu::afisarePrimeK() {
+
+}
+
+void Meniu::afisareProcent() {
+
+}
 
 int main() {
     Meniu m;
