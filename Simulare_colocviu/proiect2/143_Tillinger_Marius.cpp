@@ -447,7 +447,7 @@ public:
     float getRatingFinal();
 };
 
-int Computer::current_id = 0;
+int Computer::current_id = 1;
 
 istream &operator>> ( istream &in, Computer &c ) {      //operatorul de citire pentru cate un calculator
     string tip;
@@ -560,6 +560,7 @@ public:
                 afisareProcent();
             } else if (option == 6) {
                 cout << "----------------------------------------------||----------------------------------------------------\n";
+                calculatoare.clear();
                 break;
             }
         }
@@ -577,11 +578,10 @@ public:
 
 void Meniu::citireCalc () {
     int n;
-    Meniu::calculatoare.clear();
     cout << "Numarul calculatoarelor: "; cin >> n; cout << endl;      //input nr of computers
-    Computer c;
 
     for ( int i=0; i<n; i++ ) {
+        Computer c;
         cout << "Adaugati calculator: "; cin >> c;      //read every computer and adding it to the list of computers in the firm
         Meniu::calculatoare.push_back(c);
     }
@@ -608,9 +608,17 @@ void Meniu::afisareCalc() {
 }
 
 void Meniu::afisareOrd() {
-    vector < float > listaRating;
+    vector < float > listaRating; int contor_rating;
     for ( int i=0 ; i < Meniu::calculatoare.size() ; i++ ) {
-        listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
+        contor_rating = 0;
+        for ( int j = 0; j < listaRating.size(); j++ ) {
+            if ( listaRating[j] == Meniu::calculatoare[i].getRatingFinal() ) {
+                contor_rating++;
+            }
+        }
+        if ( contor_rating == 0 ) {
+            listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
+        }
     }
 
     sort(listaRating.begin(), listaRating.end());
@@ -624,7 +632,7 @@ void Meniu::afisareOrd() {
                     cout << "cu lista de malwareuri: ";
 
                     for (int x = 0; x < Meniu::calculatoare[j].getListaMalware().size(); x++) {
-                        Meniu::calculatoare[i].getListaMalware()[x]->impactCalc();
+                        Meniu::calculatoare[j].getListaMalware()[x]->impactCalc();
                         cout << *Meniu::calculatoare[j].getListaMalware()[x];
                     }
                     cout << "cu ratingul final de: " << Meniu::calculatoare[j].getRatingFinal() << "\n\n";
@@ -638,9 +646,17 @@ void Meniu::afisareOrd() {
 }
 
 void Meniu::afisarePrimeK() {
-    vector < float > listaRating;
+    vector < float > listaRating; int contor_rating;
     for ( int i=0 ; i < Meniu::calculatoare.size() ; i++ ) {
-        listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
+        contor_rating = 0;
+        for ( int j = 0; j < listaRating.size(); j++ ) {
+            if ( listaRating[j] == Meniu::calculatoare[i].getRatingFinal() ) {
+                contor_rating++;
+            }
+        }
+        if ( contor_rating == 0 ) {
+            listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
+        }
     }
 
     sort(listaRating.begin(), listaRating.end());
@@ -649,7 +665,7 @@ void Meniu::afisarePrimeK() {
     cout << "\nSpecificati cate calculatoare sa afisati: "; cin >> k;
 
     for ( int i = 0; i < k; i++ ) {
-        for ( int j = 0; j < Meniu::calculatoare.size(); j++ ) {
+        for ( int j = 0; j < k; j++ ) {
             if ( listaRating[i] == Meniu::calculatoare[j].getRatingFinal() ) {
                 cout << "Calculatorul cu id: " << Meniu::calculatoare[j].getId() << ", ";
 
