@@ -445,7 +445,18 @@ public:
     const vector<shared_ptr<Malware>> &getListaMalware() const;
 
     float getRatingFinal();
+
+    bool isInfected();
 };
+
+bool Computer::isInfected() {
+    if ( Computer::listaMalware.size() > 0 ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 int Computer::current_id = 1;
 
@@ -608,90 +619,40 @@ void Meniu::afisareCalc() {
 }
 
 void Meniu::afisareOrd() {
-    vector < float > listaRating; int contor_rating;
-    for ( int i=0 ; i < Meniu::calculatoare.size() ; i++ ) {
-        contor_rating = 0;
-        for ( int j = 0; j < listaRating.size(); j++ ) {
-            if ( listaRating[j] == Meniu::calculatoare[i].getRatingFinal() ) {
-                contor_rating++;
-            }
-        }
-        if ( contor_rating == 0 ) {
-            listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
-        }
-    }
-
-    sort(listaRating.begin(), listaRating.end());
-
-    for ( int i = 0; i < listaRating.size(); i++ ) {
-        for ( int j = 0; j < Meniu::calculatoare.size(); j++ ) {
-            if ( listaRating[i] == Meniu::calculatoare[j].getRatingFinal() ) {
-                cout << "Calculatorul cu id: " << Meniu::calculatoare[j].getId() << ", ";
-
-                if (Meniu::calculatoare[j].getListaMalware().size() != 0 ) {
-                    cout << "cu lista de malwareuri: ";
-
-                    for (int x = 0; x < Meniu::calculatoare[j].getListaMalware().size(); x++) {
-                        Meniu::calculatoare[j].getListaMalware()[x]->impactCalc();
-                        cout << *Meniu::calculatoare[j].getListaMalware()[x];
-                    }
-                    cout << "cu ratingul final de: " << Meniu::calculatoare[j].getRatingFinal() << "\n\n";
-
-                } else {
-                    cout << "fara malwareuri, cu ratingul final de: " << Meniu::calculatoare[j].getRatingFinal() << "\n\n";
-                }
-            }
-        }
-    }
+    sort ( Meniu::calculatoare.begin(), Meniu::calculatoare.end(), [](Computer a, Computer b) {return a.getRatingFinal() < b.getRatingFinal();});
+    Meniu::afisareCalc();
 }
 
 void Meniu::afisarePrimeK() {
-    vector < float > listaRating; int contor_rating;
-    for ( int i=0 ; i < Meniu::calculatoare.size() ; i++ ) {
-        contor_rating = 0;
-        for ( int j = 0; j < listaRating.size(); j++ ) {
-            if ( listaRating[j] == Meniu::calculatoare[i].getRatingFinal() ) {
-                contor_rating++;
-            }
-        }
-        if ( contor_rating == 0 ) {
-            listaRating.push_back(Meniu::calculatoare[i].getRatingFinal());
-        }
-    }
-
-    sort(listaRating.begin(), listaRating.end());
+    sort ( Meniu::calculatoare.begin(), Meniu::calculatoare.end(), [](Computer a, Computer b) {return a.getRatingFinal() < b.getRatingFinal();});
 
     int k;
     cout << "\nSpecificati cate calculatoare sa afisati: "; cin >> k;
 
-    for ( int i = 0; i < k; i++ ) {
-        for ( int j = 0; j < k; j++ ) {
-            if ( listaRating[i] == Meniu::calculatoare[j].getRatingFinal() ) {
-                cout << "Calculatorul cu id: " << Meniu::calculatoare[j].getId() << ", ";
+    for ( int i = 0 ; i < k ; i ++ ) {
+        cout << "Calculatorul cu id: " << Meniu::calculatoare[i].getId() << ", ";
 
-                if (Meniu::calculatoare[j].getListaMalware().size() != 0 ) {
-                    cout << "cu lista de malwareuri: ";
+        if (Meniu::calculatoare[i].getListaMalware().size() != 0 ) {
+            cout << "cu lista de malwareuri: ";
 
-                    for (int x = 0; x < Meniu::calculatoare[j].getListaMalware().size(); x++) {
-                        Meniu::calculatoare[i].getListaMalware()[x]->impactCalc();
-                        cout << *Meniu::calculatoare[j].getListaMalware()[x];
-                    }
-                    cout << "cu ratingul final de: " << Meniu::calculatoare[j].getRatingFinal() << "\n\n";
-
-                } else {
-                    cout << "fara malwareuri, cu ratingul final de: " << Meniu::calculatoare[j].getRatingFinal() << "\n\n";
-                }
+            for (int j = 0; j < Meniu::calculatoare[i].getListaMalware().size(); j++) {
+                Meniu::calculatoare[i].getListaMalware()[j]->impactCalc();
+                cout << *Meniu::calculatoare[i].getListaMalware()[j];
             }
+            cout << "cu ratingul final de: " << Meniu::calculatoare[i].getRatingFinal() << "\n\n";
+
+        } else {
+            cout << "fara malwareuri, cu ratingul final de: " << Meniu::calculatoare[i].getRatingFinal() << "\n\n";
         }
     }
 }
 
 void Meniu::afisareProcent() {
     float procent;
-    int lenght;
-    int contor;
+    float lenght;
+    float contor;
     for ( int i = 0 ; i < Meniu::calculatoare.size(); i++ ) {
-        if ( Meniu::calculatoare[i].getListaMalware().size() != 0 ) {
+        if ( Meniu::calculatoare[i].isInfected() ) {
             contor++;
         }
     }
